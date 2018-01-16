@@ -25,3 +25,6 @@ app.listen('demo-queue-name', {
   count: 1 //one message at a time
 })
 ```
+
+# Examples
+See [demo](demo/) folder for more examples.
