@@ -1,4 +1,4 @@
-const Sqlssb = require('../..')
+const Sqlssb = require('../../source')
 const config = require('./config.json')
 const app = new Sqlssb(config)
 
