@@ -11,7 +11,8 @@ module.exports = class Sqlssb extends EventEmitter {
     return this._isActive
   }
 
-  async listen (queue, options = {}) {
+  async start (options = {}) {
+    const { queue } = this._config
     const dataAdapter = new DataAdapter()
     await dataAdapter.connect(this._config)
     this._isActive = true
