@@ -1,8 +1,21 @@
 const { Connection, Request } = require('tedious')
+const driverSettings = {
+  requestTimeout: 0,
+  camelCaseColumns: true,
+  rowCollectionOnRequestCompletion: true
+}
 
 module.exports = class DataAdapter {
-  connect (config) {
-    this._connection = new Connection(config)
+  connect ({ server, user, password, database }) {
+    this._connection = new Connection({
+      server,
+      userName: user,
+      password,
+      options: {
+        database,
+        ...driverSettings
+      }
+    })
 
     return new Promise((resolve, reject) => {
       this._connection.on('connect', err => {

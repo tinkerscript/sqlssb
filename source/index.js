@@ -12,9 +12,9 @@ module.exports = class Sqlssb extends EventEmitter {
   }
 
   async start (options = {}) {
-    const { queue } = this._config
+    const { server, user, password, database, queue } = this._config
     const dataAdapter = new DataAdapter()
-    await dataAdapter.connect(this._config)
+    await dataAdapter.connect({ server, user, password, database })
     this._isActive = true
 
     do {
