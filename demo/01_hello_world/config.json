@@ -1,0 +1,7 @@
+{
+  "user": "sa",
+  "password": "Sqlssb01",
+  "server": "localhost",
+  "queue": "sqlssb_demo_queue_1",
+  "database": "sqlssb"
+}
