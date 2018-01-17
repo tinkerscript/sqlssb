@@ -1,4 +1,4 @@
-BEGIN TRAN;
+USE sqlssb;
 
 DECLARE @DialogId UNIQUEIDENTIFIER;
 
@@ -9,4 +9,4 @@ ON CONTRACT [//sqlssb/demo_contract] WITH ENCRYPTION=OFF;
 SEND ON CONVERSATION @DialogId
 MESSAGE TYPE [//sqlssb/demo_message] ('hello, broker!');
 
-COMMIT TRAN;
+GO
