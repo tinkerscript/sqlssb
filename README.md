@@ -4,15 +4,16 @@ SQL Server Service Broker client for Node.js
 # Using
 ```javascript
 const Sqlssb = require('sqlssb')
-const app = new Sqlssb({
-  username: '',
+const service1 = new Sqlssb({
+  user: '',
   password: '',
   server: '',
-  database: ''
+  database: '',
+  queue: ''
 })
 
-app.on('sqlssb-demo-message-type', msg => {
-  console.log(msg);
+service1.on('sqlssb-demo-message-type', ctx => {
+  console.log(ctx);
   //conversation_handle,
   //service_name,
   //message_type_name,
@@ -20,7 +21,7 @@ app.on('sqlssb-demo-message-type', msg => {
   //message_sequence_number 
 })
 
-app.listen('demo-queue-name', {
+service1.start({ //default settings:
   timeout: 5000, //5 seconds
   count: 1 //one message at a time
 })
