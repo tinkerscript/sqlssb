@@ -24,8 +24,9 @@ module.exports = class Sqlssb extends EventEmitter {
         continue
       }
 
-      const { message_type_name, message_body } = result
-      this.emit(message_type_name, message_body)
+      const { message_type_name } = result
+      const ctx = { ...result }
+      this.emit(message_type_name, ctx)
     } while (this.isActive)
   }
 }
