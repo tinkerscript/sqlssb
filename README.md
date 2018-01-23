@@ -13,12 +13,11 @@ const service1 = new Sqlssb({
 })
 
 service1.on('sqlssb-demo-message-type', ctx => {
-  console.log(ctx);
-  //conversation_handle,
-  //service_name,
-  //message_type_name,
-  //message_body,
-  //message_sequence_number 
+  console.log(ctx.conversationId);
+  console.log(ctx.messageBody);
+  console.log(ctx.messageTypeName);
+  console.log(ctx.messageSequenceNumber);
+  console.log(ctx.serviceName);
 })
 
 service1.start({ //default settings:
