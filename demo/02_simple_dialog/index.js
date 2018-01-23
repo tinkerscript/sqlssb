@@ -5,24 +5,24 @@ const service1 = new Sqlssb(config1)
 const service2 = new Sqlssb(config2)
 
 service1.on('//sqlssb/demo_message', ctx => {
-  if (ctx.message_body === 'STOP') {
+  if (ctx.messageBody === 'STOP') {
     service1.stop()
     return
   }
 
-  const n = parseInt(ctx.message_body, 10)
+  const n = parseInt(ctx.messageBody, 10)
 
   if (n) {
     console.log(n)
-    ctx.reply(n * 2)
+    ctx.reply('//sqlssb/demo_message', n * 2)
   }
 })
 
 service2.on('//sqlssb/demo_message', ctx => {
-  const n = parseInt(ctx.message_body, 10)
+  const n = parseInt(ctx.messageBody, 10)
 
   if (n > 10) {
-    ctx.reply('STOP')
+    ctx.reply('//sqlssb/demo_message', 'STOP')
     service2.stop()
     return
   }
