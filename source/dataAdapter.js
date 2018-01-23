@@ -56,14 +56,34 @@ module.exports = class DataAdapter {
           return
         }
 
-        const result = rows.reduce((acc, current) => {
+        const response = rows.reduce((acc, current) => {
           const key = current.metadata.colName
           acc[key] = current.value
           return acc
         }, {})
 
-        result.message_body = result.message_body.toString()
-        resolve(result)
+        response.message_body = response.message_body.toString()
+        resolve(response)
+      }))
+    })
+  }
+
+  send (conversationId, messageTypeName, messageBody) {
+    if (!this._connection) {
+      throw new Error('No connection')
+    }
+
+    const query = `SEND ON CONVERSATION ${conversationId}
+      MESSAGE TYPE [${messageTypeName}] ('${messageBody}');`
+
+    return new Promise((resolve, reject) => {
+      this._connection.execSql(new Request(query, err => {
+        if (err) {
+          reject(err)
+          return
+        }
+
+        resolve()
       }))
     })
   }

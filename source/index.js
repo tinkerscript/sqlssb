@@ -1,5 +1,6 @@
 const EventEmitter = require('events')
 const DataAdapter = require('./dataAdapter')
+const Context = require('./context')
 
 module.exports = class Sqlssb extends EventEmitter {
   constructor (config) {
@@ -18,15 +19,22 @@ module.exports = class Sqlssb extends EventEmitter {
     this._isActive = true
 
     do {
-      const result = await dataAdapter.receive(queue, options)
+      const response = await dataAdapter.receive(queue, options)
 
-      if (!result) {
+      if (!response) {
         continue
       }
 
-      const { message_type_name } = result
-      const ctx = { ...result }
-      this.emit(message_type_name, ctx)
+      const context = new Context(response, dataAdapter)
+      this.emit(context.messageTypeName, context)
     } while (this.isActive)
+  }
+
+  send () {
+    console.log('method "send ()" is not implemented')
+  }
+
+  stop () {
+    console.log('method "stop ()" is not implemented')
   }
 }
