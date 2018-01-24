@@ -10,10 +10,10 @@
     "test": "mocha tests"
   },
   "devDependencies": {
+    "mocha": "5.0.0",
     "standard": "10.0.3"
   },
   "dependencies": {
-    "mocha": "5.0.0",
     "tedious": "2.1.5"
   }
 }
