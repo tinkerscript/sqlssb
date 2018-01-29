@@ -19,17 +19,16 @@ describe('sqlssb', () => {
     adapter.send('sqlssb1', 'sample-message-type', 'test')
   })
 
-  /* it('should provide messaging', () => {
-    const service1 = new Sqlssb({})
-    const service2 = new Sqlssb({})
-
-    service1.connect()
-    service2.connect()
+  it('should provide simple messaging', () => {
+    const adapter = new FakeDataAdapter()
+    const service1 = new Sqlssb({ adapter })
+    const service2 = new Sqlssb({ adapter })
 
     service1.on('sample-message-type', ({ messageBody }) => {
-      assert.equal(messageBody, 'test')
+      assert.equal(messageBody, 'hello')
     })
 
-    service2.send('sample-message-type', 'test')
-  }) */
+    service1.start()
+    service2.send('sqlssb1', 'sample-message-type', 'hello')
+  })
 })
