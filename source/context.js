@@ -24,8 +24,11 @@ module.exports = class Context {
     return this._response.service_name
   }
 
+  get dataAdapter () {
+    return this._dataAdapter
+  }
+
   reply (messageTypeName, messageBody) {
     this.dataAdapter.send(this.conversationId, messageTypeName, messageBody)
-    console.log(`mock reply: ${messageBody}`)
   }
 }
