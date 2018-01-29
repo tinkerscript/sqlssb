@@ -6,11 +6,13 @@ module.exports = class FakeDataAdapter extends EventEmitter {
 
   receive () {
     return new Promise(resolve => {
-      this.on('message', ({
-        messageTypeName,
-        messageBody,
-        conversationId
-      }) => {
+      this.on('message', ctx => {
+        const {
+          messageTypeName,
+          messageBody,
+          conversationId
+        } = ctx
+
         resolve({
           conversation_handle: conversationId,
           message_body: messageBody,
@@ -22,11 +24,13 @@ module.exports = class FakeDataAdapter extends EventEmitter {
     })
   }
 
-  send (conversationId, messageTypeName, messageBody) {
+  send (serviceName, messageTypeName, messageBody, conversationId) {
     if (!conversationId) {
       conversationId = uuid()
     }
 
-    this.emit('message', { messageTypeName, messageBody, conversationId })
+    setTimeout(() => {
+      this.emit('message', { messageTypeName, messageBody, conversationId })
+    }, 50)
   }
 }
