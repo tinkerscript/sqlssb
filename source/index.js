@@ -33,7 +33,7 @@ module.exports = class Sqlssb extends EventEmitter {
   }
 
   send (serviceName, messageTypeName, messageBody) {
-    return this._adapter.send(serviceName, messageTypeName, messageBody)
+    return this._dataAdapter.send(serviceName, messageTypeName, messageBody)
   }
 
   stop () {
