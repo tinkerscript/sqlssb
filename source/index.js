@@ -5,7 +5,10 @@ const Context = require('./context')
 module.exports = class Sqlssb extends EventEmitter {
   constructor (config) {
     super()
+    const { adapter } = config
+
     this._config = config
+    this._dataAdapter = adapter || new DataAdapter()
   }
 
   get isActive () {
@@ -14,24 +17,23 @@ module.exports = class Sqlssb extends EventEmitter {
 
   async start (options = {}) {
     const { server, user, password, database, queue } = this._config
-    const dataAdapter = new DataAdapter()
-    await dataAdapter.connect({ server, user, password, database })
+    await this._dataAdapter.connect({ server, user, password, database })
     this._isActive = true
 
     do {
-      const response = await dataAdapter.receive(queue, options)
+      const response = await this._dataAdapter.receive(queue, options)
 
       if (!response) {
         continue
       }
 
-      const context = new Context(response, dataAdapter)
+      const context = new Context(response, this._dataAdapter)
       this.emit(context.messageTypeName, context)
     } while (this.isActive)
   }
 
-  send () {
-    console.log('method "send ()" is not implemented')
+  send (serviceName, messageTypeName, messageBody) {
+    return this._adapter.send(serviceName, messageTypeName, messageBody)
   }
 
   stop () {
