@@ -71,7 +71,7 @@ describe('sqlssb', function () {
 
     return new Promise(resolve => {
       const dialog = []
-      debugger
+      
       service1.on('sample-message-type', ctx => {
         const { messageBody } = ctx
         dialog.push(messageBody)
