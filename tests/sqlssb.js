@@ -3,11 +3,25 @@ const assert = require('assert')
 const Sqlssb = require('../source')
 const FakeDataAdapter = require('./fakeDataAdapter')
 
-describe('sqlssb', () => {
+describe('sqlssb', function () {
+  this.timeout(1000000)
+
+  beforeEach(() => {
+    FakeDataAdapter.init({
+      sqlssb1: 'queue1',
+      sqlssb2: 'queue2'
+    })
+  })
+
+  afterEach(() => {
+    FakeDataAdapter.flush()
+  })
+
   it('should receive message', done => {
-    const adapter = new FakeDataAdapter()
     const service = new Sqlssb({
-      adapter
+      adapter: FakeDataAdapter,
+      service: 'sqlssb1',
+      queue: 'queue1'
     })
 
     service.on('sample-message-type', ({ messageBody }) => {
@@ -16,16 +30,27 @@ describe('sqlssb', () => {
     })
 
     service.start()
-    adapter.send('sqlssb1', 'sample-message-type', 'test')
+    FakeDataAdapter.send('sqlssb2', 'sqlssb1', {
+      messageTypeName: 'sample-message-type',
+      messageBody: 'test'
+    })
   })
 
-  it('should provide simple messaging', () => {
-    const adapter = new FakeDataAdapter()
-    const service1 = new Sqlssb({ adapter })
-    const service2 = new Sqlssb({ adapter })
+  it('should provide simple messaging', done => {
+    const service1 = new Sqlssb({
+      adapter: FakeDataAdapter,
+      service: 'sqlssb1',
+      queue: 'queue1'
+    })
+    const service2 = new Sqlssb({
+      adapter: FakeDataAdapter,
+      service: 'sqlssb2',
+      queue: 'queue2'
+    })
 
     service1.on('sample-message-type', ({ messageBody }) => {
       assert.equal(messageBody, 'hello')
+      done()
     })
 
     service1.start()
@@ -33,13 +58,20 @@ describe('sqlssb', () => {
   })
 
   it('should provide dialog', () => {
-    const adapter = new FakeDataAdapter()
-    const service1 = new Sqlssb({ adapter })
-    const service2 = new Sqlssb({ adapter })
+    const service1 = new Sqlssb({
+      adapter: FakeDataAdapter,
+      service: 'sqlssb1',
+      queue: 'queue1'
+    })
+    const service2 = new Sqlssb({
+      adapter: FakeDataAdapter,
+      service: 'sqlssb2',
+      queue: 'queue2'
+    })
 
     return new Promise(resolve => {
       const dialog = []
-
+      debugger
       service1.on('sample-message-type', ctx => {
         const { messageBody } = ctx
         dialog.push(messageBody)
