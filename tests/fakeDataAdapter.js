@@ -1,13 +1,47 @@
 const uuid = require('uuid/v1')
 const EventEmitter = require('events')
+const DataAdapter = require('../source/dataAdapter')
 
-module.exports = class FakeDataAdapter extends EventEmitter {
+module.exports = class FakeDataAdapter extends DataAdapter {
+  static init (services) {
+    this._services = services
+    this._queues = Object.entries(services).reduce((result, [, queue]) => {
+      result[queue] = new EventEmitter()
+      return result
+    }, {})
+  }
+
+  static flush () {
+    Object.entries(this._queues).forEach(([, emitter]) => {
+      emitter.removeAllListeners()
+    })
+  }
+
+  static send (from, to, { messageTypeName, messageBody }) {
+    const queue = FakeDataAdapter._services[to]
+
+    setTimeout(() => {
+      this._queues[queue].emit('message', {
+        serviceName: from,
+        messageTypeName,
+        messageBody
+      })
+    }, 50)
+  }
+
+  constructor (args) {
+    super(args)
+    const { service } = args
+    this._serviceName = service
+  }
+
   connect () {}
 
-  receive () {
+  receive (queue) {
     return new Promise(resolve => {
-      this.on('message', ctx => {
+      FakeDataAdapter._queues[queue].on('message', ctx => {
         const {
+          serviceName,
           messageTypeName,
           messageBody,
           conversationId
@@ -18,7 +52,7 @@ module.exports = class FakeDataAdapter extends EventEmitter {
           message_body: messageBody,
           message_type_name: messageTypeName,
           message_sequence_number: 0,
-          service_name: ''
+          service_name: serviceName
         })
       })
     })
@@ -29,8 +63,8 @@ module.exports = class FakeDataAdapter extends EventEmitter {
       conversationId = uuid()
     }
 
-    setTimeout(() => {
-      this.emit('message', { messageTypeName, messageBody, conversationId })
-    }, 50)
+    FakeDataAdapter.send(this._serviceName, serviceName, {
+      messageTypeName, messageBody, conversationId
+    })
   }
 }

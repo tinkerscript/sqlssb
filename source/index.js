@@ -5,10 +5,11 @@ const Context = require('./context')
 module.exports = class Sqlssb extends EventEmitter {
   constructor (config) {
     super()
-    const { adapter } = config
-
+    const { adapter: CustomAdapter, service } = config
     this._config = config
-    this._dataAdapter = adapter || new DataAdapter()
+    this._dataAdapter = new (CustomAdapter || DataAdapter)({
+      service
+    })
   }
 
   get isActive () {

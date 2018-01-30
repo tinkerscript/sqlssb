@@ -29,6 +29,6 @@ module.exports = class Context {
   }
 
   reply (messageTypeName, messageBody) {
-    this.dataAdapter.send(this.conversationId, messageTypeName, messageBody)
+    this.dataAdapter.send(this.serviceName, messageTypeName, messageBody)
   }
 }
