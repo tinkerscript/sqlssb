@@ -5,11 +5,12 @@ SQL Server Service Broker client for Node.js
 ```javascript
 const Sqlssb = require('sqlssb')
 const service1 = new Sqlssb({
-  user: '',
-  password: '',
-  server: '',
-  database: '',
-  queue: ''
+  user: 'sa',
+  password: '<PASSOWRD>',
+  server: 'localhost',
+  database: 'sqlssbb',
+  service: 'sqlssb-demo-sample-service',
+  queue: 'sqlssb-demo-sample-queue'
 })
 
 service1.on('sqlssb-demo-message-type', ctx => {

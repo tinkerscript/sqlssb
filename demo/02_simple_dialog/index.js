@@ -29,11 +29,11 @@ service2.on('//sqlssb/demo_message', ctx => {
 
   if (n) {
     console.log(n)
-    ctx.reply(n * 2)
+    ctx.reply('//sqlssb/demo_message', n * 2)
   }
 })
 
 service1.start()
 service2.start()
 
-service1.send('sqlssb_demo_queue_2', 1)
+service1.send('sqlssb_demo_queue_2', '//sqlssb/demo_message', 1)
