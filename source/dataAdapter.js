@@ -68,7 +68,7 @@ module.exports = class DataAdapter {
     })
   }
 
-  send (conversationId, messageTypeName, messageBody) {
+  send (serviceName, messageTypeName, messageBody, conversationId) {
     if (!this._connection) {
       throw new Error('No connection')
     }

@@ -1,6 +1,5 @@
 const EventEmitter = require('events')
 const DataAdapter = require('./dataAdapter')
-const Context = require('./context')
 
 module.exports = class Sqlssb extends EventEmitter {
   constructor (config) {
@@ -28,13 +27,34 @@ module.exports = class Sqlssb extends EventEmitter {
         continue
       }
 
-      const context = new Context(response, this._dataAdapter)
+      const context = this.createContext(response)
       this.emit(context.messageTypeName, context)
     } while (this.isActive)
   }
 
-  send (serviceName, messageTypeName, messageBody) {
-    return this._dataAdapter.send(serviceName, messageTypeName, messageBody)
+  createContext (response) {
+    const { service_name: serviceName } = response
+
+    return {
+      conversationId: response.conversation_handle,
+      messageBody: response.message_body,
+      messageTypeName: response.message_type_name,
+      messageSequenceNumber: response.message_sequence_number,
+      serviceName,
+      dataAdapter: this._dataAdapter,
+      reply: (messageTypeName, messageBody) => {
+        this._dataAdapter.send(serviceName, messageTypeName, messageBody)
+      }
+    }
+  }
+
+  send (serviceName, messageTypeName, messageBody, conversationId) {
+    return this._dataAdapter.send(
+      serviceName,
+      messageTypeName,
+      messageBody,
+      conversationId
+    )
   }
 
   stop () {
