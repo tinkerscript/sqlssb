@@ -2,6 +2,7 @@
   "user": "sa",
   "password": "Sqlssb01",
   "server": "localhost",
+  "service": "sqlssb_demo_service_2",
   "queue": "sqlssb_demo_queue_2",
   "database": "sqlssb"
 }
