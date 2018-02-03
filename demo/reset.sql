@@ -1,4 +1,10 @@
-USE sqlssb;
+DROP DATABASE IF EXISTS [sqlssb];
+GO
+
+CREATE DATABASE [sqlssb];
+GO
+
+USE [sqlssb];
 
 CREATE MESSAGE TYPE [//sqlssb/demo_message];
 
