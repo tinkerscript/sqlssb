@@ -22,22 +22,20 @@ module.exports = class FakeDataAdapter extends DataAdapter {
 
     setTimeout(() => {
       this._queues[queue].emit('message', {
-        serviceName: from,
+        serviceName: to,
         messageTypeName,
         messageBody
       })
     }, 50)
   }
 
-  constructor (args) {
-    super(args)
-    const { service } = args
-    this._serviceName = service
+  connect () {
+    return Promise.resolve()
   }
 
-  connect () {}
+  receive () {
+    const { queue } = this._config
 
-  receive (queue) {
     return new Promise(resolve => {
       FakeDataAdapter._queues[queue].on('message', ctx => {
         const {
@@ -63,7 +61,7 @@ module.exports = class FakeDataAdapter extends DataAdapter {
       conversationId = uuid()
     }
 
-    FakeDataAdapter.send(this._serviceName, serviceName, {
+    FakeDataAdapter.send(this._config.service, serviceName, {
       messageTypeName, messageBody, conversationId
     })
   }

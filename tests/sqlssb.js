@@ -71,7 +71,7 @@ describe('sqlssb', function () {
 
     return new Promise(resolve => {
       const dialog = []
-      
+
       service1.on('sample-message-type', ctx => {
         const { messageBody } = ctx
         dialog.push(messageBody)
@@ -94,9 +94,12 @@ describe('sqlssb', function () {
         }
       })
 
-      service1.start()
-      service2.start()
-      service1.send('sqlssb2', 'sample-message-type', 'hello')
+      return Promise.all([
+        service1.start(),
+        service2.start()
+      ]).then(() => {
+        return service1.send('sqlssb2', 'sample-message-type', 'hello')
+      })
     }).then(dialog => {
       assert.deepEqual(dialog, ['hello', 'well hello', 'bye'])
     })
