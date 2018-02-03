@@ -6,8 +6,14 @@ const driverSettings = {
 }
 
 module.exports = class DataAdapter {
-  connect ({ server, user, password, database }) {
-    this._connection = new Connection({
+  constructor (config) {
+    this._config = config
+  }
+
+  _connect () {
+    const { server, user, password, database } = this._config
+
+    const connection = new Connection({
       server,
       userName: user,
       password,
@@ -18,21 +24,29 @@ module.exports = class DataAdapter {
     })
 
     return new Promise((resolve, reject) => {
-      this._connection.on('connect', err => {
+      connection.on('connect', err => {
         if (err) {
           reject(err)
           return
         }
 
-        resolve()
+        resolve(connection)
       })
     })
   }
 
-  receive (queue, { count = 1, timeout = 5000 } = {}) {
+  connect () {
+    return this._connect().then(connection => {
+      this._connection = connection
+    })
+  }
+
+  receive ({ count = 1, timeout = 5000 } = {}) {
     if (!this._connection) {
       throw new Error('No connection')
     }
+
+    const { queue } = this._config
 
     const query = `waitfor(  
       RECEIVE top (${count})
@@ -68,22 +82,36 @@ module.exports = class DataAdapter {
     })
   }
 
-  send (serviceName, messageTypeName, messageBody, conversationId) {
-    if (!this._connection) {
-      throw new Error('No connection')
+  async send (serviceName, messageTypeName, messageBody, conversationId) {
+    const connection = await this._connect()
+    const lines = [`DECLARE @DialogId UNIQUEIDENTIFIER;`]
+    const from = this._config.service
+
+    if (conversationId) {
+      lines.push(`SET @DialogId = '${conversationId}';`)
+    } else {
+      lines.push(...[
+        `BEGIN DIALOG @DialogId`,
+        `FROM SERVICE [${from}] TO SERVICE '${serviceName}'`,
+        `ON CONTRACT [//sqlssb/demo_contract] WITH ENCRYPTION=OFF;`
+      ])
     }
 
-    const query = `SEND ON CONVERSATION ${conversationId}
-      MESSAGE TYPE [${messageTypeName}] ('${messageBody}');`
+    lines.push(...[
+      `SEND ON CONVERSATION @DialogId`,
+      `MESSAGE TYPE [${messageTypeName}] ('${messageBody}');`
+    ])
+
+    const query = lines.join('\n')
 
     return new Promise((resolve, reject) => {
-      this._connection.execSql(new Request(query, err => {
+      connection.execSql(new Request(query, err => {
         if (err) {
           reject(err)
-          return
+        } else {
+          resolve()
         }
-
-        resolve()
+        connection.close()
       }))
     })
   }
