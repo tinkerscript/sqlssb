@@ -4,6 +4,7 @@ const DataAdapter = require('../source/dataAdapter')
 
 module.exports = class FakeDataAdapter extends DataAdapter {
   static init (services) {
+    this._dialogs = {}
     this._services = services
     this._queues = Object.entries(services).reduce((result, [, queue]) => {
       result[queue] = new EventEmitter()
@@ -17,14 +18,26 @@ module.exports = class FakeDataAdapter extends DataAdapter {
     })
   }
 
-  static send (from, to, { messageTypeName, messageBody }) {
-    const queue = FakeDataAdapter._services[to]
+  static send (from, to, { messageTypeName, messageBody, conversationId }) {
+    let queue = FakeDataAdapter._services[to]
+
+    if (conversationId) {
+      const target = this._dialogs[conversationId][from]
+      queue = FakeDataAdapter._services[target]
+    } else {
+      conversationId = uuid()
+      this._dialogs[conversationId] = {
+        [from]: to,
+        [to]: from
+      }
+    }
 
     setTimeout(() => {
       this._queues[queue].emit('message', {
         serviceName: to,
         messageTypeName,
-        messageBody
+        messageBody,
+        conversationId
       })
     }, 50)
   }
@@ -57,11 +70,9 @@ module.exports = class FakeDataAdapter extends DataAdapter {
   }
 
   send (serviceName, messageTypeName, messageBody, conversationId) {
-    if (!conversationId) {
-      conversationId = uuid()
-    }
+    const from = this._config.service
 
-    FakeDataAdapter.send(this._config.service, serviceName, {
+    FakeDataAdapter.send(from, serviceName, {
       messageTypeName, messageBody, conversationId
     })
   }
