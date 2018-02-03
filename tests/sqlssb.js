@@ -79,6 +79,11 @@ describe('sqlssb', function () {
         if (messageBody === 'well hello') {
           ctx.reply('sample-message-type', 'bye')
         }
+
+        if (messageBody === 'ok bye') {
+          ctx.reply('sample-message-type', 'bye')
+          resolve(dialog)
+        }
       })
 
       service2.on('sample-message-type', ctx => {
@@ -90,7 +95,7 @@ describe('sqlssb', function () {
         }
 
         if (messageBody === 'bye') {
-          resolve(dialog)
+          ctx.reply('sample-message-type', 'ok bye')
         }
       })
 
@@ -101,7 +106,7 @@ describe('sqlssb', function () {
         return service1.send('sqlssb2', 'sample-message-type', 'hello')
       })
     }).then(dialog => {
-      assert.deepEqual(dialog, ['hello', 'well hello', 'bye'])
+      assert.deepEqual(dialog, ['hello', 'well hello', 'bye', 'ok bye'])
     })
   })
 })
