@@ -48,15 +48,15 @@ module.exports = class DataAdapter {
 
     const { queue } = this._config
 
-    const query = `waitfor(  
-      RECEIVE top (${count})
+    const query = `WAITFOR (  
+      RECEIVE TOP (${count})
         conversation_handle,
         service_name,
         message_type_name,
         message_body,
         message_sequence_number  
       FROM [${queue}]  
-    ), timeout ${timeout}`
+    ), TIMEOUT ${timeout}`
 
     return new Promise((resolve, reject) => {
       this._connection.execSql(new Request(query, (err, rowCount, [rows]) => {
