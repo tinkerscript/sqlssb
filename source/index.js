@@ -52,20 +52,18 @@ module.exports = class Sqlssb extends EventEmitter {
       serviceName,
       dataAdapter: this._dataAdapter,
       reply: (messageTypeName, messageBody) => {
-        this._dataAdapter.send(
-          serviceName, messageTypeName, messageBody, conversationId
-        )
+        this._dataAdapter.send({
+          target: serviceName,
+          type: messageTypeName,
+          body: messageBody,
+          conversationId
+        })
       }
     }
   }
 
-  send (serviceName, messageTypeName, messageBody, conversationId) {
-    return this._dataAdapter.send(
-      serviceName,
-      messageTypeName,
-      messageBody,
-      conversationId
-    )
+  send (args) {
+    return this._dataAdapter.send(args)
   }
 
   stop () {
