@@ -35,7 +35,12 @@ Promise.all([
   service1.start(),
   service2.start()
 ]).then(() => {
-  return service1.send('sqlssb_demo_service_2', '//sqlssb/demo_message', 2)
+  return service1.send({
+    target: 'sqlssb_demo_service_2',
+    type: '//sqlssb/demo_message',
+    contract: '//sqlssb/demo_contract',
+    body: 2
+  })
 }).catch(err => {
   console.error(err)
 })
