@@ -69,6 +69,7 @@ module.exports = class Sqlssb extends EventEmitter {
   }
 
   stop () {
-    console.log('method "stop ()" is not implemented')
+    this._dataAdapter.stop()
+    this._isActive = false
   }
 }

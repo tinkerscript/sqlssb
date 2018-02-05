@@ -115,4 +115,9 @@ module.exports = class DataAdapter {
       }))
     })
   }
+
+  stop () {
+    this._connection.cancel()
+    this._connection.close()
+  }
 }
