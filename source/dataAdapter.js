@@ -82,7 +82,8 @@ module.exports = class DataAdapter {
     })
   }
 
-  async send (serviceName, messageTypeName, messageBody, conversationId) {
+  async send ({ target, type, body, contract, conversationId }) {
+    debugger
     const connection = await this._connect()
     const lines = [`DECLARE @DialogId UNIQUEIDENTIFIER;`]
     const from = this._config.service
@@ -92,14 +93,14 @@ module.exports = class DataAdapter {
     } else {
       lines.push(...[
         `BEGIN DIALOG @DialogId`,
-        `FROM SERVICE [${from}] TO SERVICE '${serviceName}'`,
-        `ON CONTRACT [//sqlssb/demo_contract] WITH ENCRYPTION=OFF;`
+        `FROM SERVICE [${from}] TO SERVICE '${target}'`,
+        `ON CONTRACT [${contract}] WITH ENCRYPTION=OFF;`
       ])
     }
 
     lines.push(...[
       `SEND ON CONVERSATION @DialogId`,
-      `MESSAGE TYPE [${messageTypeName}] ('${messageBody}');`
+      `MESSAGE TYPE [${type}] ('${body}');`
     ])
 
     const query = lines.join('\n')
@@ -114,5 +115,10 @@ module.exports = class DataAdapter {
         connection.close()
       }))
     })
+  }
+
+  stop () {
+    this._connection.cancel()
+    this._connection.close()
   }
 }

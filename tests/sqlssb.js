@@ -31,8 +31,8 @@ describe('sqlssb', function () {
 
     service.start()
     FakeDataAdapter.send('sqlssb2', 'sqlssb1', {
-      messageTypeName: 'sample-message-type',
-      messageBody: 'test'
+      type: 'sample-message-type',
+      body: 'test'
     })
   })
 
@@ -54,7 +54,12 @@ describe('sqlssb', function () {
     })
 
     service1.start()
-    service2.send('sqlssb1', 'sample-message-type', 'hello')
+    service2.send({
+      target: 'sqlssb1',
+      type: 'sample-message-type',
+      contract: '//sqlssb/demo_contract',
+      body: 'hello'
+    })
   })
 
   it('should provide dialog', () => {
@@ -103,7 +108,12 @@ describe('sqlssb', function () {
         service1.start(),
         service2.start()
       ]).then(() => {
-        return service1.send('sqlssb2', 'sample-message-type', 'hello')
+        return service1.send({
+          target: 'sqlssb2',
+          type: 'sample-message-type',
+          contract: '//sqlssb/demo_contract',
+          body: 'hello'
+        })
       })
     }).then(dialog => {
       assert.deepEqual(dialog, ['hello', 'well hello', 'bye', 'ok bye'])

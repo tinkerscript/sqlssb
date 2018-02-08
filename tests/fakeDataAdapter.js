@@ -18,7 +18,7 @@ module.exports = class FakeDataAdapter extends DataAdapter {
     })
   }
 
-  static send (from, to, { messageTypeName, messageBody, conversationId }) {
+  static send (from, to, { type, body, conversationId }) {
     let queue = FakeDataAdapter._services[to]
 
     if (conversationId) {
@@ -35,8 +35,8 @@ module.exports = class FakeDataAdapter extends DataAdapter {
     setTimeout(() => {
       this._queues[queue].emit('message', {
         serviceName: to,
-        messageTypeName,
-        messageBody,
+        messageTypeName: type,
+        messageBody: body,
         conversationId
       })
     }, 50)
@@ -69,11 +69,11 @@ module.exports = class FakeDataAdapter extends DataAdapter {
     })
   }
 
-  send (serviceName, messageTypeName, messageBody, conversationId) {
+  send ({ target, type, body, contract, conversationId }) {
     const from = this._config.service
 
-    FakeDataAdapter.send(from, serviceName, {
-      messageTypeName, messageBody, conversationId
+    FakeDataAdapter.send(from, target, {
+      type, body, conversationId
     })
   }
 }
