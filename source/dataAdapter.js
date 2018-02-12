@@ -1,4 +1,4 @@
-const { Connection, Request } = require('tedious')
+const { Connection, Request, TYPES } = require('tedious')
 const driverSettings = {
   requestTimeout: 0,
   camelCaseColumns: true,
@@ -49,17 +49,17 @@ module.exports = class DataAdapter {
     const { queue } = this._config
 
     const query = `WAITFOR (  
-      RECEIVE TOP (${count})
+      RECEIVE TOP (@count)
         conversation_handle,
         service_name,
         message_type_name,
         message_body,
         message_sequence_number  
       FROM [${queue}]  
-    ), TIMEOUT ${timeout}`
+    ), TIMEOUT @timeout`
 
     return new Promise((resolve, reject) => {
-      this._connection.execSql(new Request(query, (err, rowCount, [rows]) => {
+      const request = new Request(query, (err, rowCount, [rows]) => {
         if (err) {
           reject(err)
           return
@@ -78,7 +78,11 @@ module.exports = class DataAdapter {
 
         response.message_body = response.message_body.toString()
         resolve(response)
-      }))
+      })
+
+      request.addParameter('count', TYPES.Int, count)
+      request.addParameter('timeout', TYPES.Int, timeout)
+      this._connection.execSql(request)
     })
   }
 
