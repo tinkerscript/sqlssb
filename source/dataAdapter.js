@@ -96,27 +96,31 @@ module.exports = class DataAdapter {
     } else {
       lines.push(...[
         `BEGIN DIALOG @DialogId`,
-        `FROM SERVICE [${from}] TO SERVICE '${target}'`,
+        `FROM SERVICE [${from}] TO SERVICE @target`,
         `ON CONTRACT [${contract}] WITH ENCRYPTION=OFF;`
       ])
     }
 
     lines.push(...[
       `SEND ON CONVERSATION @DialogId`,
-      `MESSAGE TYPE [${type}] ('${body}');`
+      `MESSAGE TYPE [${type}] (@body);`
     ])
 
     const query = lines.join('\n')
 
     return new Promise((resolve, reject) => {
-      connection.execSql(new Request(query, err => {
+      const request = new Request(query, err => {
         if (err) {
           reject(err)
         } else {
           resolve()
         }
         connection.close()
-      }))
+      })
+
+      request.addParameter('body', TYPES.VarChar, body)
+      request.addParameter('target', TYPES.VarChar, target)
+      connection.execSql(request)
     })
   }
 
