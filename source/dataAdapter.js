@@ -83,7 +83,6 @@ module.exports = class DataAdapter {
   }
 
   async send ({ target, type, body, contract, conversationId }) {
-    debugger
     const connection = await this._connect()
     const lines = [`DECLARE @DialogId UNIQUEIDENTIFIER;`]
     const from = this._config.service
