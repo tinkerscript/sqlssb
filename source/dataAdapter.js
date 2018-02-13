@@ -50,11 +50,20 @@ module.exports = class DataAdapter {
 
     const query = `WAITFOR (  
       RECEIVE TOP (@count)
+        conversation_group_id,
         conversation_handle,
-        service_name,
+        message_sequence_number,
+        message_body, 
+        message_type_id,
         message_type_name,
-        message_body,
-        message_sequence_number  
+        priority,
+        queuing_order,
+        service_contract_id,
+        service_contract_name,
+        service_id,
+        service_name,
+        status,
+        validation
       FROM [${queue}]  
     ), TIMEOUT @timeout`
 
