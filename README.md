@@ -1,6 +1,9 @@
 # sqlssb
 SQL Server Service Broker client for Node.js
 
+[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+
+
 # Using
 ```javascript
 const Sqlssb = require('sqlssb')
