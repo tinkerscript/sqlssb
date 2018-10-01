@@ -1,8 +1,16 @@
+use [master];
+
 DROP DATABASE IF EXISTS [sqlssb];
 GO
 
 CREATE DATABASE [sqlssb];
 GO
+
+ALTER AUTHORIZATION ON DATABASE::sqlssb TO sa
+GO
+
+ALTER DATABASE [sqlssb]
+SET ENABLE_BROKER;
 
 USE [sqlssb];
 
