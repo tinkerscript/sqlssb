@@ -33,3 +33,13 @@ service1.start({ //default settings:
 
 # Examples
 See [demo](demo/) folder for more examples.
+
+# Development
+To setup / reset demo stuff:
+```bash
+sqlcmd -S localhost -U sa -P Sqlssb01 -i demo/reset.sql
+```
+Tests:
+```bash
+npm test
+```
