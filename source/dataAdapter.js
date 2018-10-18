@@ -11,13 +11,14 @@ module.exports = class DataAdapter {
   }
 
   _connect () {
-    const { server, user, password, database } = this._config
+    const { server, user, password, database, encrypt = false } = this._config
 
     const connection = new Connection({
       server,
       userName: user,
       password,
       options: {
+        encrypt,
         database,
         ...driverSettings
       }
