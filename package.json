@@ -16,6 +16,6 @@
     "uuid": "3.3.2"
   },
   "dependencies": {
-    "tedious": "2.6.4"
+    "tedious": "^2.6.0"
   }
 }

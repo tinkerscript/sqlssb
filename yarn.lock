@@ -1513,7 +1513,7 @@ table@^4.0.3:
     slice-ansi "1.0.0"
     string-width "^2.1.1"
 
-tedious@2.6.4:
+tedious@^2.6.0:
   version "2.6.4"
   resolved "https://registry.yarnpkg.com/tedious/-/tedious-2.6.4.tgz#b3dee882458fbed8e7c8778156344f049dda3f38"
   integrity sha512-upFZB4QahZydPIV2VK3H/bz8Fsq5FSjqbxDbhhp1c/66ZJB1qCk5p1cXi2p/VUOgAYbmAzVObTg5kaVvmeyN+Q==
